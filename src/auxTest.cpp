@@ -396,7 +396,7 @@ TYPED_TEST(auxTest, testRedistributeFromPartition) {
     settings.numBlocks = comm->getSize();
 
     for( bool useRedistributor: std::vector<bool>({false, true}) ){
-        for( bool renumberPEs: std::vector<bool>({true, false}) ){
+        for( bool renumberPEs: std::vector<bool>({false, true}) ){
 
             PRINT0("useRedistributor: " << useRedistributor << ", renumberPEs: "<< renumberPEs);
             
@@ -404,8 +404,6 @@ TYPED_TEST(auxTest, testRedistributeFromPartition) {
             DenseVector<IndexType> copyPartition = partition;
             std::vector<DenseVector<ValueType>> copyCoordinates = coordinates;
             std::vector<DenseVector<ValueType>> copyWeights = nodeWeights;
-
-            //graph.redistribute( inputDist );
 
             //get some metrics of the current partition to verify that it does not change after renumbering
             std::pair<std::vector<IndexType>,std::vector<IndexType>> borderAndInnerNodes = GraphUtils<IndexType,ValueType>::getNumBorderInnerNodes( copyGraph, copyPartition, settings);

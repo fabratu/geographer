@@ -750,7 +750,7 @@ TYPED_TEST ( GraphUtilsTest, testPEGraphBlockGraph_k_equal_p_Distributed) {
     settings.epsilon = 0.2;
     settings.dimensions = dimensions;
     settings.minGainForNextRound = 100;
-    //settings.noRefinement = true;
+    settings.noRefinement = true;
     settings.initialPartition = Tool::geoSFC;
     Metrics<ValueType> metrics(settings);
 

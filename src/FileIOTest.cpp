@@ -169,7 +169,7 @@ TYPED_TEST(FileIOTest, testWriteGraphWithEdgeWeights) {
 
 //-----------------------------------------------------------------
 // read a graph from a file in METIS format and its coordinates in 2D and partition that graph
-// usually, graph file: "file.graph", coordinates file: "file.graph.xy" or .xyz
+// usually, graph file: "file.graph", coordinates file: "file.graph.xyz" 
 TYPED_TEST(FileIOTest, testPartitionFromFile_dist_2D) {
     using ValueType = TypeParam;
 
@@ -197,7 +197,7 @@ TYPED_TEST(FileIOTest, testPartitionFromFile_dist_2D) {
 
     SCAI_REGION_START("testPartitionFromFile_local_2D.readGraphFromFile");
     graph = FileIO<IndexType, ValueType>::readGraph( grFile );
-    graph.redistribute( distPtr, noDistPtr);
+    //graph.redistribute( distPtr, noDistPtr);
     std::cout<< "graph has <"<< nodes<<"> nodes and -"<< edges<<"- edges\n";
     SCAI_REGION_END("testPartitionFromFile_local_2D.readGraphFromFile");
 
