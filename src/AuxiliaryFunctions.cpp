@@ -208,16 +208,19 @@ scai::dmemo::DistributionPtr aux<IndexType,ValueType>::redistributeFromPartition
 
     scai::dmemo::DistributionPtr distFromPartition;
 
-    if( useRedistributor ) {
-        PRINT0("***\tWarning: using a redistributor creates inconsistencies and is currently deprecated. Switching to no-redistributor version");
-        useRedistributor = false;
-    }
+SCAI_ASSERT_DEBUG( graph.isConsistent(), graph << ": is invalid matrix after redistribution" );    
+SCAI_ASSERT_EQ_ERROR( *graph.getRowDistributionPtr(), partition.getDistribution() , "Wrong source distribution" );    
 
     if( useRedistributor ) {
+        SCAI_ASSERT_EQ_ERROR(partition.getLocalValues().size(),partition.getDistributionPtr()->getLocalSize(), "Distribution size mismatch" );
         scai::dmemo::RedistributePlan resultRedist = scai::dmemo::redistributePlanByNewOwners(partition.getLocalValues(), partition.getDistributionPtr());
         distFromPartition = resultRedist.getTargetDistributionPtr();
 
-        scai::dmemo::RedistributePlan redistributor = scai::dmemo::redistributePlanByNewDistribution( distFromPartition, graph.getRowDistributionPtr());
+        scai::dmemo::DistributionPtr sourceDist = graph.getRowDistributionPtr();
+        SCAI_ASSERT_ERROR( sourceDist->isEqual(coordinates[0].getDistribution()) , "Wrong source distribution" );
+        SCAI_ASSERT_ERROR( sourceDist->isEqual(nodeWeights[0].getDistribution()) , "Wrong source distribution" );
+
+        scai::dmemo::RedistributePlan redistributor = scai::dmemo::redistributePlanByNewDistribution( distFromPartition, sourceDist );
     
         redistributeInput( redistributor, partition, graph, coordinates, nodeWeights);      
     } else {
@@ -226,6 +229,7 @@ scai::dmemo::DistributionPtr aux<IndexType,ValueType>::redistributeFromPartition
 
         redistributeInput( distFromPartition, partition, graph, coordinates, nodeWeights);       
     }
+SCAI_ASSERT_DEBUG( graph.isConsistent(), graph << ": is invalid matrix after redistribution" );
 
     const scai::dmemo::DistributionPtr rowDist = graph.getRowDistributionPtr();
     SCAI_ASSERT_ERROR( nodeWeights[0].getDistribution().isEqual(*rowDist), "Distribution mismatch" );
@@ -636,7 +640,6 @@ bool aux<IndexType, ValueType>::alignDistributions(
         //redistribute
         //scai::dmemo::DistributionPtr distFromPart = aux<IndexType,ValueType>::redistributeFromPartition( partition, graph, coords, nodeWeights, settings, false, true);        
 
-        //TODO?: can also redistribute everything based on a block or genBlock distribution
         const scai::dmemo::DistributionPtr newGenBlockDist = GraphUtils<IndexType, ValueType>::genBlockRedist(graph);
         
         aux<IndexType,ValueType>::redistributeInput( newGenBlockDist, partition, graph, coords, nodeWeights);

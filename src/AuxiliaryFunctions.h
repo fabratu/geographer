@@ -389,7 +389,8 @@ public:
 		const Settings settings);
 	
 	
-    /**@brief Check if distributions align and redistribute if not. Return if redistribution occurred.
+    /**@brief Check if distributions align and if not, redistribute to a general block distribution
+        in which every PE has the same number of nodes as before. Return if redistribution occurred.
     */
 
     static bool alignDistributions(

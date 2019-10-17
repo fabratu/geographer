@@ -39,7 +39,7 @@ using scai::lama::CSRStorage;
 
 
 template<typename IndexType, typename ValueType>
-scai::dmemo::DistributionPtr GraphUtils<IndexType,ValueType>::genBlockRedist(scai::lama::CSRSparseMatrix<ValueType> &graph) {
+scai::dmemo::DistributionPtr GraphUtils<IndexType,ValueType>::genBlockRedist( const scai::lama::CSRSparseMatrix<ValueType> &graph) {
     const scai::dmemo::DistributionPtr inputDist = graph.getRowDistributionPtr();
     const scai::dmemo::CommunicatorPtr comm = inputDist->getCommunicatorPtr();
 
@@ -48,8 +48,6 @@ scai::dmemo::DistributionPtr GraphUtils<IndexType,ValueType>::genBlockRedist(sca
 
     //get the global IDs of all the local indices
     scai::dmemo::DistributionPtr blockDist = scai::dmemo::genBlockDistributionBySize(globalN, localN, comm);
-
-    graph.redistribute( blockDist, graph.getColDistributionPtr() );
 
     return blockDist;
 }
@@ -373,7 +371,7 @@ ValueType GraphUtils<IndexType,ValueType>::computeCut(const CSRSparseMatrix<Valu
     double totalTime= comm->max(endTime.count() );
 
     if( comm->getRank()==0 ) {
-        std::cout<<" done in " << totalTime << " seconds " << std::endl;
+        std::cout<<"\tdone in " << totalTime << " seconds " << std::endl;
     }
 
     return result / 2; //counted each edge from both sides
@@ -710,8 +708,8 @@ std::pair<std::vector<IndexType>,std::vector<IndexType>> GraphUtils<IndexType, V
 
     scai::dmemo::CommunicatorPtr comm = scai::dmemo::Communicator::getCommunicatorPtr();
 
-    if( comm->getRank()==0 ) {
-        std::cout<<"Computing the border and inner nodes..." << std::endl;
+    if( comm->getRank()==0 and settings.verbose) {
+        std::cout<<"Computing the border and inner nodes...";
     }
     std::chrono::time_point<std::chrono::steady_clock> startTime =  std::chrono::steady_clock::now();
 
@@ -779,8 +777,8 @@ std::pair<std::vector<IndexType>,std::vector<IndexType>> GraphUtils<IndexType, V
 
     std::chrono::duration<double> endTime = std::chrono::steady_clock::now() - startTime;
     double totalTime= comm->max(endTime.count() );
-    if( comm->getRank()==0 ) {
-        std::cout<<"\t\t\t time to get number of border and inner nodes : " << totalTime <<  std::endl;
+    if( comm->getRank()==0 and settings.verbose) {
+        std::cout<<"\tdone in " << totalTime <<  std::endl;
     }
 
     return std::make_pair( borderNodesPerBlock, innerNodesPerBlock );

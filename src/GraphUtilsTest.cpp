@@ -77,7 +77,7 @@ TYPED_TEST(GraphUtilsTest, testReindexCut) {
     }
 
     //redistribute based on the partition to simulate a real scenario
-    aux<IndexType, ValueType>::redistributeFromPartition( partition, graph, coords, nodeWeights, settings );    
+    aux<IndexType, ValueType>::redistributeFromPartition( partition, graph, coords, nodeWeights, settings, true );    
     const scai::dmemo::DistributionPtr genDist = graph.getRowDistributionPtr();
 
     //graph.checkSettings();
@@ -109,6 +109,8 @@ TYPED_TEST(GraphUtilsTest, testReindexCut) {
     EXPECT_NEAR( l2Norm, graph.l2Norm(), 1e-5 );
 
     partition.redistribute( newGenBlockDist );
+    graph.redistribute( newGenBlockDist, graph.getColDistributionPtr() );
+
     DenseVector<IndexType> reIndexedPartition = partition;
 
     ASSERT_TRUE(reIndexedPartition.getDistributionPtr()->isEqual(*newGenBlockDist));
