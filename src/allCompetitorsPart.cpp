@@ -136,6 +136,7 @@ int main(int argc, char** argv) {
 
         //get the partition
         ITI::Wrappers<IndexType,ValueType>* partitioner;
+        ITI::Wrappers<IndexType,ValueTypeParMetis>* partitionerParMetis;
         if( ITI::to_string(thisTool).rfind("zoltan",0)==0 ){
 #if ZOLTAN_FOUND            
             partitioner = new zoltanWrapper<IndexType,ValueType>;
@@ -144,7 +145,7 @@ int main(int argc, char** argv) {
 #endif            
         }else if( ITI::to_string(thisTool).rfind("parMetis",0)==0 ){
 #if PARMETIS_FOUND            
-            partitioner = new parmetisWrapper<IndexType,ValueTypeParMetis>;
+            partitionerParMetis = new parmetisWrapper<IndexType,ValueTypeParMetis>;
 #else
             throw std::runtime_error("Requested a parmetis tool but parmetis is not found. Pick another tool.\nAborting...");
 #endif
