@@ -400,6 +400,7 @@ scai::lama::DenseVector<IndexType> parmetisWrapper<IndexType, ValueType>::repart
 }
 
 template class parmetisWrapper<IndexType, real_t>;
+template class parmetisWrapper<IndexType, double>;
 //template class parmetisWrapper<IndexType, float>;
 
 }//namespace ITI
