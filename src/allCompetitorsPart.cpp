@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
 
     using namespace ITI;
     typedef double ValueType;   //use double
+    typedef float ValueTypeParMetis; // use float for parmetis
 
     // timing information
     std::chrono::time_point<std::chrono::steady_clock> startTime = std::chrono::steady_clock::now();
@@ -143,7 +144,7 @@ int main(int argc, char** argv) {
 #endif            
         }else if( ITI::to_string(thisTool).rfind("parMetis",0)==0 ){
 #if PARMETIS_FOUND            
-            partitioner = new parmetisWrapper<IndexType,ValueType>;
+            partitioner = new parmetisWrapper<IndexType,ValueTypeParMetis>;
 #else
             throw std::runtime_error("Requested a parmetis tool but parmetis is not found. Pick another tool.\nAborting...");
 #endif
